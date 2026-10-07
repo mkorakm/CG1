@@ -53,8 +53,7 @@ def hsv_to_rgb(h, s, v):
 
 MODELS = {
     "RGB":  [("R", 0, 255, 1), ("G", 0, 255, 1), ("B", 0, 255, 1)],
-    "CMYK": [("C", 0, 100, 0.1), ("M", 0, 100, 0.1),
-             ("Y", 0, 100, 0.1), ("K", 0, 100, 0.1)],
+    "CMYK": [("C", 0, 100, 0.1), ("M", 0, 100, 0.1), ("Y", 0, 100, 0.1), ("K", 0, 100, 0.1)],
     "HSV":  [("H", 0, 360, 0.1), ("S", 0, 100, 0.1), ("V", 0, 100, 0.1)],
 }
 
@@ -89,13 +88,10 @@ class Row:
         frame.pack(fill="x", pady=2)
         tk.Label(frame, text=name, width=2, font=("Arial", 11, "bold")).pack(side="left")
 
-        self.scale = tk.Scale(frame, from_=lo, to=hi, resolution=step,
-                              orient="horizontal", showvalue=False, length=230,
-                              command=self._scale_moved)
+        self.scale = tk.Scale(frame, from_=lo, to=hi, resolution=step,orient="horizontal", showvalue=False, length=230,command=self._scale_moved)
         self.scale.pack(side="left", padx=5)
 
-        self.entry = tk.Spinbox(frame, from_=lo, to=hi, increment=step, width=7,
-                                textvariable=self.var, command=self._entry_changed)
+        self.entry = tk.Spinbox(frame, from_=lo, to=hi, increment=step, width=7,textvariable=self.var, command=self._entry_changed)
         self.entry.pack(side="left")
         self.entry.bind("<Return>", lambda e: self._entry_changed())
         self.entry.bind("<FocusOut>", lambda e: self._entry_changed())
@@ -104,7 +100,6 @@ class Row:
         return str(round(value)) if self.step >= 1 else f"{value:.1f}"
 
     def set(self, value):
-
         self.scale.set(value)
         self.var.set(self.fmt(value))
 
@@ -127,25 +122,23 @@ class Row:
 
 class App:
     def __init__(self, root):
-        root.title("Цветовые модели: CMYK - RGB - HSV")
+
         self.lock = False
         self.rgb = [255, 128, 0]
 
-        left = tk.Frame(root, padx=10, pady=10)
+        left = tk.Frame(root, padx=20, pady=10)
         left.pack(side="left", fill="y")
-        self.preview = tk.Label(left, width=22, height=10)
+        self.preview = tk.Label(left, width=30, height=10)
         self.preview.pack()
-        self.hex_label = tk.Label(left, font=("Courier", 14, "bold"))
+        self.hex_label = tk.Label(left, font=("Arial", 14, "bold"))
         self.hex_label.pack(pady=8)
-        tk.Button(left, text="Выбрать из палитры...",
-                  command=self.pick_from_palette).pack()
+        tk.Button(left, text="Выбрать из палитры...", command=self.pick_from_palette).pack()
 
         right = tk.Frame(root, padx=10, pady=10)
         right.pack(side="left")
         self.rows = {}
         for model, comps in MODELS.items():
-            box = tk.LabelFrame(right, text=model, padx=8, pady=5,
-                                font=("Arial", 11, "bold"))
+            box = tk.LabelFrame(right, text=model, padx=8, pady=5, font=("Arial", 11, "bold"))
             box.pack(fill="x", pady=4)
             self.rows[model] = [
                 Row(box, name, lo, hi, step, lambda m=model: self.on_change(m))
@@ -159,8 +152,8 @@ class App:
         if self.lock:
             return
         values = [row.get() for row in self.rows[model]]
-        self.rgb = to_rgb(model, values)        # 1) переводим в RGB
-        self.refresh(skip=model)                # 2) обновляем остальные модели
+        self.rgb = to_rgb(model, values)
+        self.refresh(skip=model)
 
     def refresh(self, skip):
 
